@@ -8,29 +8,27 @@ import { catchError, map, mergeMap, of } from "rxjs";
 @Injectable({ providedIn: 'root' })
 export class AppEffects {
 
+  constructor(
+    private actions$: Actions,
+    private srtUrlService: UrlShortenerApiService,
+    ){}
+
   callShortApi$ = createEffect(() =>
   this.actions$.pipe(
     ofType(appActions.callShortApi),
       map((action) => action.url),
       mergeMap((url: string) =>
         this.srtUrlService.getShortCode(url).pipe(
-          map((res: IApiRes) => {
-            console.log(res);
-            return appActions.setShortenedUrls({ urls: this.generateFormUrls(res) })
-          }
-          ),
+          map((res: IApiRes) => appActions.setShortenedUrls({ urls: this.formatResForComponent(res) })),
           catchError((err) => of(appActions.setShortApiError({ error: err })))
           )
         )
       )
     );
 
-  constructor(
-    private actions$: Actions,
-    private srtUrlService: UrlShortenerApiService,
-    ){}
 
-  generateFormUrls (res:IApiRes) {
+  formatResForComponent (res:IApiRes) {
+    // function to fromat the response in IApiRes format to IUrlShortcode[] format
     const links = [ res.result.short_link, res.result.short_link2];
 
     const urlShortCodes:IUrlShortcode[]  = links.map(link => {

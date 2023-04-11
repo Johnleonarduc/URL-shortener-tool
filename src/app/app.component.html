@@ -5,7 +5,7 @@
   alt="Logo"
   src="../assets/icons/url_shortener.png"
   />
-  <h1> URL Shortener Tool</h1>
+  <h1> {{title}}</h1>
   <div id="social-icons">
     <a aria-label="Developer Github Account" target="_blank" rel="noopener" href="https://github.com/Johnleonarduc/URL-shortener-tool" title="Github">
       <img src="../assets/icons/github.svg" alt="Github Logo">
@@ -20,13 +20,13 @@
 
 <main>
   <section id="tool">
-    <form [formGroup]="urlForm">
+    <form>
       <mat-form-field >
-        <textarea rows="3" matInput type="text" placeholder="Input The URL" formControlName="url"></textarea>
+        <textarea matInput type="text" placeholder="Input The URL" rows="3"  [formControl]="url"></textarea>
         <mat-hint>{{errorMessage}}</mat-hint>
       </mat-form-field>
 
-      <button #button id="button" mat-raised-button type="submit" (click)="getShortLink(button)" [disabled]="urlForm.pristine || isBtnDisabled"> Shorten </button>
+      <button id="button" mat-raised-button (click)="getShortLink()" type="button" [disabled]="url.pristine || isBtnDisabled"> Shorten </button>
     </form>
     <div id="wrapper" *ngIf="urlShortStatus">
       <div id="results" *ngFor="let shortCode of urlShortCode; index as i">

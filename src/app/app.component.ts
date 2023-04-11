@@ -1,7 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { UrlShortenerApiService } from './core/url-shortener-api.service';
-import { IApiRes, IUrlShortcode, URL_SHORT_CODE_INIT } from './interfaces/api-res';
+import { Component, OnInit} from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { IUrlShortcode, URL_SHORT_CODE_INIT } from './interfaces/api-res';
 import { AppState } from './state/app.state';
 import { Store, select } from '@ngrx/store';
 import * as appActions from "./state/app.actions";
@@ -11,11 +10,10 @@ import { takeWhile } from 'rxjs';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  title = 'URL-shortener-tool';
+  title = 'URL Shortener Tool';
 
   // UI element States
   urlShortStatus:boolean = false;
@@ -24,7 +22,7 @@ export class AppComponent implements OnInit{
   componentActive:boolean = true;
 
 
-  urlForm: FormGroup;
+  url: FormControl;
   urlShortCode: IUrlShortcode[] = URL_SHORT_CODE_INIT;
   errorMessage:string = '';
 
@@ -32,9 +30,7 @@ export class AppComponent implements OnInit{
     private fb: FormBuilder,
     private store: Store<AppState>,
   ){
-    this.urlForm = this.fb.group({
-      url: '',
-    });
+    this.url = this.fb.control('');
   }
 
   ngOnInit(){
@@ -42,6 +38,8 @@ export class AppComponent implements OnInit{
     takeWhile(()=> this.componentActive))
     .subscribe({next: shortenedUrls => {
       this.urlShortCode = shortenedUrls;
+
+      // update UI Component Status
       this.urlShortStatus = true;
       this.isLoading = false;
       this.isBtnDisabled = false;
@@ -52,18 +50,21 @@ export class AppComponent implements OnInit{
       takeWhile(()=> this.componentActive))
         .subscribe({next: err => {
           this.errorMessage = err;
+
+      // update UI Component Status
           this.urlShortStatus = false;
           this.isLoading = false;
+          this.isBtnDisabled = false;
         }
       })
   }
 
-  getShortLink(button:any){
+  getShortLink(){
     // ensure button is cliked once
     this.isBtnDisabled = true;
     this.isLoading = true;
 
-    const url = this.urlForm.get('url')?.value;
+    const url = this.url?.value;
     if (url.split('://')[0] === 'https' || url.split('://')[0] === 'http'){
       this.errorMessage = "";
       this.store.dispatch(appActions.callShortApi({url}));
@@ -75,6 +76,7 @@ export class AppComponent implements OnInit{
   }
 
   ngOnDestroy() {
+    // remove subscriptions to store
     this.componentActive = false;
   }
 }
