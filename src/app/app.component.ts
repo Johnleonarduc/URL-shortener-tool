@@ -1,7 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UrlShortenerApiService } from './core/url-shortener-api.service';
-import { API_RES_INIT, IApiRes, IUrlShortcode, URL_SHORT_CODE_INIT } from './interfaces/api-res';
+import { IApiRes, IUrlShortcode, URL_SHORT_CODE_INIT } from './interfaces/api-res';
+import { AppState } from './state/app.state';
+import { Store, select } from '@ngrx/store';
+import * as appActions from "./state/app.actions";
+import * as fromApp from "./state/app.reducer";
+import { takeWhile } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -12,63 +17,64 @@ import { API_RES_INIT, IApiRes, IUrlShortcode, URL_SHORT_CODE_INIT } from './int
 export class AppComponent implements OnInit{
   title = 'URL-shortener-tool';
 
-  urlForm: FormGroup;
-  urlShortCode: IUrlShortcode[] = URL_SHORT_CODE_INIT;
-  errorMessage:string = '';
+  // UI element States
   urlShortStatus:boolean = false;
   isBtnDisabled:boolean = true;
   isLoading:boolean = false;
+  componentActive:boolean = true;
 
+
+  urlForm: FormGroup;
+  urlShortCode: IUrlShortcode[] = URL_SHORT_CODE_INIT;
+  errorMessage:string = '';
 
   constructor(
     private fb: FormBuilder,
-    private srtUrl: UrlShortenerApiService
+    private store: Store<AppState>,
   ){
     this.urlForm = this.fb.group({
       url: '',
     });
   }
 
-
-
   ngOnInit(){
+    this.store.pipe(select(fromApp.getShortCodeUrls),
+    takeWhile(()=> this.componentActive))
+    .subscribe({next: shortenedUrls => {
+      this.urlShortCode = shortenedUrls;
+      this.urlShortStatus = true;
+      this.isLoading = false;
+      this.isBtnDisabled = false;
+    }
+    })
 
-
+    this.store.pipe(select(fromApp.getApiCallError),
+      takeWhile(()=> this.componentActive))
+        .subscribe({next: err => {
+          this.errorMessage = err;
+          this.urlShortStatus = false;
+          this.isLoading = false;
+        }
+      })
   }
 
   getShortLink(button:any){
     // ensure button is cliked once
-    button.disabled = true;
+    this.isBtnDisabled = true;
     this.isLoading = true;
+
     const url = this.urlForm.get('url')?.value;
     if (url.split('://')[0] === 'https' || url.split('://')[0] === 'http'){
       this.errorMessage = "";
-      this.srtUrl.getShortCode(url).subscribe(
-        {
-          next: (res:IApiRes) => {
-            button.disabled = false;
-            this.isLoading = false;
-            const links = [ res.result.short_link, res.result.short_link2];
-
-            this.urlShortCode = links.map(link => {
-            this.urlShortStatus = true;
-              return {
-                short_link: link,
-                short_link_href: `https://${link}`,
-              }
-            })},
-          error: err => {
-            this.isLoading = false;
-            this.urlShortStatus = false;
-            button.disabled = false;
-            this.errorMessage = err;
-          }
-        }
-      )
+      this.store.dispatch(appActions.callShortApi({url}));
     }else{
       this.isLoading = false;
       this.errorMessage = "Paste a correct url, ensure it starts with https:// or http://"
-      button.disabled = false;
+      this.isBtnDisabled = false;
     }
+  }
+
+  ngOnDestroy() {
+    this.componentActive = false;
   }
 }

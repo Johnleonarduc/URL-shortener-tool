@@ -10,6 +10,11 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 import { AppComponent } from './app.component';
+import { Store, StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { appReducer } from './state/app.reducer';
+import { AppEffects } from './state/app.effects';
 
 @NgModule({
   declarations: [
@@ -25,6 +30,12 @@ import { AppComponent } from './app.component';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    StoreModule.forRoot({"app": appReducer}),
+    EffectsModule.forRoot([AppEffects]),
+    StoreDevtoolsModule.instrument({
+      name: 'URL Shortener',
+      maxAge: 25,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
