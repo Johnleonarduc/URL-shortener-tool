@@ -1,2 +1,11 @@
 /* import CSS Reset */
 @import '~normalize.css';
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+
+html, body{
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #333;
+  width: 100vw;
+  height: 100%;
+}

@@ -1,45 +1,45 @@
 <!-- Toolbar -->
-<header class="toolbar" role="banner">
+<header role="banner">
   <img
-    width="40"
-    alt="Logo"
-    src="../assets/icons/url_shortener.png"
+  width="40"
+  alt="Logo"
+  src="../assets/icons/url_shortener.png"
   />
-  <span>The Ultimate URL Shortener Tool</span>
-    <div class="spacer"></div>
-    <a aria-label="Developer Github Account" target="_blank" rel="noopener" href="https://github.com/Johnleonarduc" title="Github">
+  <h1> URL Shortener Tool</h1>
+  <div id="social-icons">
+    <a aria-label="Developer Github Account" target="_blank" rel="noopener" href="https://github.com/Johnleonarduc/URL-shortener-tool" title="Github">
       <img src="../assets/icons/github.svg" alt="Github Logo">
     </a>
     <a aria-label="Developer LinkedIn Account" target="_blank" rel="noopener" href="https://www.linkedin.com/in/johnleonarduc/" title="LinkedIn">
       <img src="../assets/icons/linkedin.svg" alt="LinkedIn logo">
     </a>
+  </div>
 </header>
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
 
 <main>
   <section id="tool">
     <form [formGroup]="urlForm">
       <mat-form-field >
-        <input matInput type="text" placeholder="Input The URL" formControlName="url">
+        <textarea rows="3" matInput type="text" placeholder="Input The URL" formControlName="url"></textarea>
+        <mat-hint>{{errorMessage}}</mat-hint>
       </mat-form-field>
 
-      <button type="submit" (click)="getShortLink()"> Shorten </button>
+      <button #button id="button" mat-raised-button type="submit" (click)="getShortLink(button)" [disabled]="urlForm.pristine"> Shorten </button>
     </form>
     <div id="wrapper" *ngIf="urlShortStatus">
       <div id="results" *ngFor="let shortCode of urlShortCode; index as i">
         <p> Short URL {{i+1}}:
-          <a href="shortCode.short_link_href">{{shortCode.short_link}}</a>
+          <a [href]="shortCode.short_link_href" target="_blank" rel="noopener">{{shortCode.short_link}}</a>
         </p>
       </div>
     </div>
 
-  </section>
 
-  {{urlForm.value |json}}
+
+  </section>
 </main>
 
-<!-- Footer -->
 <footer>
-
+   &copy; 2023 Cypress Interview Project
 </footer>
-
-<router-outlet></router-outlet>

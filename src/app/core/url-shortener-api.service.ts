@@ -25,13 +25,7 @@ export class UrlShortenerApiService {
 
 
   private handleError(err: HttpErrorResponse){
-    let errorMessage = '';
-    if(err.error instanceof ErrorEvent){
-      errorMessage = `An error occured: ${err.error.message}`;
-    }else{
-      errorMessage = `Server returned code: ${err.status} error message is ${err.message}`;
-    }
-    return throwError(() => errorMessage)
+    return throwError(() => err.error.error)
   };
 
 }
