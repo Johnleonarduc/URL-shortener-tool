@@ -12,7 +12,7 @@ This project implements a URL shortener tool using https://shrtco.de/docs
 - Language: Typescript, NGRX
 
 ## Demo this App:
-- The page is hosted on Netlify at [Url Shortener](https://urlshortener.netlify.com)
+- The page is hosted on Netlify at [Url Shortener](https://urlshortenertool.netlify.app)
 
 
 ## Basic Setup:
