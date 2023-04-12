@@ -59,6 +59,14 @@ export class AppComponent implements OnInit{
       })
   }
 
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.getShortLink();
+    }
+  }
+
+
   getShortLink(){
     // ensure button is cliked once
     this.isBtnDisabled = true;

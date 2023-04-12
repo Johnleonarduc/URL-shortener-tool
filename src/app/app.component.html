@@ -1,5 +1,5 @@
 <!-- Toolbar -->
-<header role="banner">
+<header>
   <img
   width="40"
   alt="Logo"
@@ -22,8 +22,7 @@
   <section id="tool">
     <form>
       <mat-form-field >
-        <!-- I chose to use textarea instead to input to enable users easily edit long urls they pasted if they choose to. -->
-        <textarea matInput type="text" placeholder="Input The URL" rows="3"  [formControl]="url" autofocus></textarea>
+        <input matInput type="text" placeholder="Input The URL"  [formControl]="url" autofocus (keydown)="onKeyDown($event)">
         <mat-hint>{{errorMessage}}</mat-hint>
       </mat-form-field>
 

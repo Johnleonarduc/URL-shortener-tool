@@ -61,7 +61,7 @@ form mat-form-field{
   margin-bottom: 2em;
 }
 
-form textarea{
+form input{
   font-size: 1em;
 }
 
@@ -70,6 +70,7 @@ mat-hint {
 }
 
 #button {
+  align-self: start;
   position: relative;
   background-color: #2c96df;
   color: white;
@@ -109,6 +110,10 @@ footer {
   section#tool form{
     grid-template-rows: none;
     grid-template-columns: 3fr 1fr;
+  }
+
+  #button {
+    margin-top: .7em;
   }
 
 }
