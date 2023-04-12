@@ -65,7 +65,8 @@ export class AppComponent implements OnInit{
     this.isLoading = true;
 
     const url = this.url?.value;
-    if (url.split('://')[0] === 'https' || url.split('://')[0] === 'http'){
+    const httpSegment = url.split('://')[0].toLowerCase();
+    if (httpSegment === 'https' || httpSegment === 'http'){
       this.errorMessage = "";
       this.store.dispatch(appActions.callShortApi({url}));
     }else{

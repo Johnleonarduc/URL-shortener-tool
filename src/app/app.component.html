@@ -22,7 +22,8 @@
   <section id="tool">
     <form>
       <mat-form-field >
-        <textarea matInput type="text" placeholder="Input The URL" rows="3"  [formControl]="url"></textarea>
+        <!-- I chose to use textarea instead to input to enable users easily edit long urls they pasted if they choose to. -->
+        <textarea matInput type="text" placeholder="Input The URL" rows="3"  [formControl]="url" autofocus></textarea>
         <mat-hint>{{errorMessage}}</mat-hint>
       </mat-form-field>
 
